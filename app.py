@@ -25,8 +25,13 @@ def construir_prompt(producto, publico, tono, plataforma):
 
 @app.route('/generar-conceptos', methods=['POST'])
 def generar_conceptos_api():
-    if not model: return jsonify({"error": "El cerebro IA no está conectado."}), 503
+    if not model:
+        return jsonify({"error": "El cerebro IA no está conectado."}), 503
+    
     data = request.get_json()
+    if not data or not all(k in data for k in ['producto', 'publico', 'tono', 'plataforma']):
+        return jsonify({"error": "Faltan datos en la solicitud."}), 400
+
     prompt = construir_prompt(
         producto=data.get('producto'),
         publico=data.get('publico'),
